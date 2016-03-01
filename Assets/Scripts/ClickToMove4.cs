@@ -29,8 +29,8 @@ public class ClickToMove4 : MonoBehaviour {
 
             float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
 
-            print("rot_z:" + rot_z);
-            print("transform.rotation.z:" + transform.rotation.z * Mathf.Rad2Deg);
+            // print("rot_z:" + rot_z);
+            // print("transform.rotation.z:" + transform.rotation.z * Mathf.Rad2Deg);
         }
 
         Vector3 offset = wantedPosition - transform.position;
@@ -44,29 +44,16 @@ public class ClickToMove4 : MonoBehaviour {
 
     void Update()
     {
-        float angle = Vector3.Angle(wantedPosition, transform.position);
-       
-        //print("angle" + angle);
-        // Make it face the right direction
-        Vector3 diff = wantedPosition - transform.position;
-        diff.Normalize();
-
-        float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg + 270) % 360;
-
         
-        //print();
-        if (rot_z > transform.localEulerAngles.z + 1)
-        {
-            print("rot_z:" + rot_z + " > transform.rotation.z:" + transform.localEulerAngles.z);
-            transform.Rotate(new Vector3(0, 0, Mathf.Min(250F * Time.deltaTime, rot_z - transform.localEulerAngles.z)));
-        }
-        else if (rot_z < transform.localEulerAngles.z - 1)
-        {
-            print("rot_z:" + rot_z + " < transform.rotation.z:" + transform.localEulerAngles.z);
-            transform.Rotate(new Vector3(0, 0, Mathf.Max(-250F * Time.deltaTime, rot_z - transform.localEulerAngles.z)));
-        }
-        
+        Vector3 direction = wantedPosition - transform.position;
+
+        Quaternion nRotate = Quaternion.LookRotation(direction,Vector3.back); // Vector3.back == (0,0,-1) orientation ??
+        // Keep only z-component
+        nRotate.x = 0;
+        nRotate.y = 0;
+        transform.rotation = Quaternion.Slerp(transform.rotation,nRotate,0.1F);
     }
+
 
 }
 
